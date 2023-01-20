@@ -7,7 +7,7 @@
 #========================================================================
 #Setting working directory
 
-setwd("E:/PhD/species modelling/manuscript/sdm/data analysis")
+setwd("E:/sdmmodel/species modelling/manuscript/sdm/data analysis")
 
 library(sp)
 library(dplyr)
@@ -30,12 +30,6 @@ coordinates(Lates)<- ~lon+lat
 #Environmental variables data from Worldclim
 #-------------------------------------------------------------------------------------
 biocp <- raster::getData('worldclim', var='bio', res=2.5)
-
-rc <- ENMTools::raster.cor.matrix(biocp, method = 'pearson')
-
-mat <- as.matrix(rc)
-
-
 names(biocp)<- c("AMT", "MDR", "ISO", "TS", "MaxTWM", "MinTCM", "TAR", 
                  "MTWeQ","MTDQ", 
                  "MTWaQ","MTCoQ", "AP", "PWM", "PDrM","PS", "PWeQ", 
@@ -70,7 +64,6 @@ set.seed(1135)
 SDModel<- sdm(lates~., data=sdmpre, methods = c("glm", "svm", "gam", "rf", 
                                                 "brt","bioclim"),
               replication=c("sub"), test.percent=30, n=10)
-
 #-------------------------------------------------------------------------------------
 #Model predcitions 
 PredN<- predict(SDModel, biocdp, "LatesN.img")
@@ -85,10 +78,6 @@ plot(ensp, col=col(4))
 plot(Africashp, add=TRUE, border="grey")
 zoom(ensp, ext=extcug)
 #=======================================================================================
-
-?zoom
-
-
 #Individual Model ensembles
 glm1<- getModelId(sdmodel, method = c("glm"))
 glme<- ensemble(sdmodel, biocdp, filename = "GLM.img",
@@ -133,7 +122,6 @@ ensfrgrg<- ensemble(sdmodel, biof50, filename = "Distribution44.img",
 ensf702<- ensemble(sdmodel, biof70, 
                    filename = "L.niloticus distribut at 70s.img", 
                    setting=list(method="weighted", stat="AUC"))
-
 
 #==========================================================================
 #Graphical output presentation
@@ -195,7 +183,6 @@ SVM70<- ensemble(sdmodel, biof70, filename = "svm70.img",
 brt70<- getModelId(sdmodel, method = c("brt"))
 BRT70<- ensemble(sdmodel, biof70, filename = "brt70.img",
                  setting=list(method="weighted", stat="AUC", id=brt70))
-
 
 #----------------------------------------------------------------------
 #calcualting the differences
